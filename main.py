@@ -1,5 +1,6 @@
 import argparse
 import time
+import torch
 from chunking import DocumentChunker
 from attention_retrieval import AttentionRetriever
 from cache_manager import CacheManager
