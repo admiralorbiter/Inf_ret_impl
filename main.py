@@ -78,7 +78,7 @@ def answer_question_with_infinitretri(
     cached_context = cache_mgr.get_cached_text()
     
     # Prepare the final prompt for answer generation
-    final_prompt = f"{cached_context}\n\nQuestion: {question}\nAnswer:"
+    final_prompt = f"Context information:\n{cached_context}\n\nBased on the above context only, answer the following question once:\nQuestion: {question}\nAnswer:"
     
     # Generate the answer
     input_ids = retriever.tokenizer.encode(final_prompt, return_tensors='pt').to(retriever.device)
@@ -128,6 +128,12 @@ if __name__ == "__main__":
         max_cache_size=args.max_cache,
         verbose=args.verbose
     )
+    
+    # Filter the answer to only include the first sentence or up to the first question
+    if "\nQuestion:" in answer:
+        answer = answer.split("\nQuestion:")[0].strip()
+    elif "." in answer:
+        answer = answer.split(".")[0].strip() + "."
     
     print("\n" + "="*50)
     print(f"Question: {args.question}")
